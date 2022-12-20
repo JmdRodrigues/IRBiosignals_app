@@ -2,7 +2,6 @@ import matplotlib.pyplot as plt
 import scipy.signal
 from scipy.signal import spectrogram
 from tsfel.feature_extraction.features_utils import *
-from novainstrumentation import smooth
 import sys
 
 
