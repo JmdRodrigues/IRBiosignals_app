@@ -8,11 +8,12 @@ from matplotlib import cm
 
 from tools.ssm_tools import *
 
+
 uploaded_file = st.file_uploader("Choose a file")
 if uploaded_file is not None:
     s = np.loadtxt(uploaded_file)
 else:
-    s = np.loadtxt("data/emg_example.txt")
+    s = np.loadtxt("data/emg_example.txt", skiprows=1)[:, 1]
 
 st.title("NOVA App - Time Series Segmentation and Annotation")
 
@@ -20,7 +21,7 @@ st.title("NOVA App - Time Series Segmentation and Annotation")
 st.line_chart(s)
 
 #put params
-window_size = st.slider('window size', 10, len(s)//3, 500)
+window_size = st.slider('window size', 10, len(s)//3, len(s)//10)
 
 S = compute_ssm(s, window_size, 0.95)
 # im = Image.fromarray(S).convert("RGB")
