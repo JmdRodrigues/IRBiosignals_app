@@ -4,5 +4,4 @@ libfmp
 tsfel
 numpy
 scipy
-json
 novainstrumentation
