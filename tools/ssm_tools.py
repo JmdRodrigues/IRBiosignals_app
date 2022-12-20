@@ -41,7 +41,7 @@ def compute_novelty_ssm(S, kernel=None, L=10, var=0.5, exclude=False):
 
     return nov
 
-@jit(nopython=True)
+#@jit(nopython=True)
 def compute_sm_dot(X, Y):
     """Computes similarty matrix from feature sequences using dot (inner) product
 
