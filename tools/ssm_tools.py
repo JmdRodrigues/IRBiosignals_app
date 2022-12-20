@@ -1,10 +1,62 @@
-from libfmp.c4 import *
-from libfmp.c3 import *
-
 import numpy as np
 
 from tools.processing_tools_final import normalize_feature_sequence_z
 from tools.feature_extraction_tools import ExtractFeatureMatrix
+
+#### Code from LIBFMP ####
+#   https://github.com/meinardmueller/libfmp/blob/master/libfmp/c4/c4s2_ssm.py
+#   Error when loading the app due to a dependency from libfmp - soundfile???
+# @jit(nopython=True)
+def compute_novelty_ssm(S, kernel=None, L=10, var=0.5, exclude=False):
+    """Compute novelty function from SSM [FMP, Section 4.4.1]
+
+    Notebook: C4/C4S4_NoveltySegmentation.ipynb
+
+    Args:
+        S (np.ndarray): SSM
+        kernel (np.ndarray): Checkerboard kernel (if kernel==None, it will be computed) (Default value = None)
+        L (int): Parameter specifying the kernel size M=2*L+1 (Default value = 10)
+        var (float): Variance parameter determing the tapering (epsilon) (Default value = 0.5)
+        exclude (bool): Sets the first L and last L values of novelty function to zero (Default value = False)
+
+    Returns:
+        nov (np.ndarray): Novelty function
+    """
+    if kernel is None:
+        kernel = compute_kernel_checkerboard_gaussian(L=L, var=var)
+    N = S.shape[0]
+    M = 2*L + 1
+    nov = np.zeros(N)
+    # np.pad does not work with numba/jit
+    S_padded = np.pad(S, L, mode='constant')
+
+    for n in range(N):
+        # Does not work with numba/jit
+        nov[n] = np.sum(S_padded[n:n+M, n:n+M] * kernel)
+    if exclude:
+        right = np.min([L, N])
+        left = np.max([0, N-L])
+        nov[0:right] = 0
+        nov[left:N] = 0
+
+    return nov
+
+@jit(nopython=True)
+def compute_sm_dot(X, Y):
+    """Computes similarty matrix from feature sequences using dot (inner) product
+
+    Notebook: C4/C4S2_SSM.ipynb
+
+    Args:
+        X (np.ndarray): First sequence
+        Y (np.ndarray): Second Sequence
+
+    Returns:
+        S (float): Dot product
+    """
+    S = np.dot(np.transpose(X), Y)
+    return S
+####
 
 def compute_ssm(s, window_size, overlap_perc):
     feat_Mat = ExtractFeatureMatrix(s, window_size, perc_overlap=overlap_perc)
@@ -31,5 +83,3 @@ def perioric_event_cost(s, window_size, overlap_perc):
     per_ssm = np.sum(S, axis=0)
 
     return per_ssm
-
-
