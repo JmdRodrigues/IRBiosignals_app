@@ -11,6 +11,8 @@ from tools.ssm_tools import *
 uploaded_file = st.file_uploader("Choose a file")
 if uploaded_file is not None:
     s = np.loadtxt(uploaded_file)
+else:
+    s = np.loadtxt("data/emg_example.txt")
 
 st.title("NOVA App - Time Series Segmentation and Annotation")
 
