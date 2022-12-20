@@ -1,0 +1,8 @@
+streamlit
+matplotlib
+libfmp
+tsfel
+numpy
+scipy
+json
+novainstrumentation
