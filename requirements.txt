@@ -1,7 +1,6 @@
 streamlit
 matplotlib
 soundfile
-libfmp
 tsfel
 numpy
 scipy
